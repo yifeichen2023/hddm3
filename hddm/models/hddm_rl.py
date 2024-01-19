@@ -1136,6 +1136,7 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
 
     # if
     print(alpha_pos,alpha_neu,alpha_neg)
+    print(bandit_type)
     return wiener_like_rlddm_uncertainty(
     # return wiener_like_rlddm_2step_reg_sliding_window(
         x["rt1"].values,
