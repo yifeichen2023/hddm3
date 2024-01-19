@@ -1028,7 +1028,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
     # cdef double st = 0
     # cdef double sv = 0
 
-
+    print('inside wfpt')
     cdef Py_ssize_t size = x1.shape[0]
     cdef Py_ssize_t i, j
     cdef Py_ssize_t s_size
