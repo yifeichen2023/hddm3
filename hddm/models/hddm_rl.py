@@ -560,7 +560,7 @@ class HDDMrl(HDDM):
                 )
 
             # YC added for new TST with aversive outcomes, 01-19-24
-            if self.dual:
+            if self.aversive:
                 knodes.update(
                     self._create_family_normal(
                         "alpha_pos",
