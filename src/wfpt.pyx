@@ -979,7 +979,10 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                       np.ndarray[long, ndim=1] response2,
                       np.ndarray[double, ndim=1] feedback,
                       np.ndarray[long, ndim=1] split_by,
-                      double q, double alpha, double pos_alpha,
+                      double q, 
+                      double bandit_type,
+                      double alpha, double pos_alpha,
+                      double alpha_pos, double alpha_neu, double alpha_neg, # YC added for aversive outcomes, 01-19-24
 
                       # double w,
                       double gamma, double gamma2,
@@ -1204,6 +1207,9 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
         s1s = s1[split_by == s]
         s2s = s2[split_by == s]
 
+        # YC added 01-19-24
+        bandit_types = bandit_type[split_by==s]
+
         s_size = x1s.shape[0]
         qs_mf[:,0] = q
         qs_mf[:,1] = q
@@ -1213,6 +1219,15 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
 
         if alpha != 100.00:
             alfa = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+
+        # YC added for aversive outcomes, 01-19-24
+        if alpha_pos != 100.00:
+            alfa_pos = (2.718281828459**alpha_pos) / (1 + 2.718281828459**alpha_pos)
+        if alpha_neu != 100.00:
+            alfa_neu = (2.718281828459**alpha_neu) / (1 + 2.718281828459**alpha_neu)
+        if alpha_neg != 100.00:
+            alfa_neg = (2.718281828459**alfa_neg) / (1 + 2.718281828459**alfa_neg)
+
         if gamma != 100.00:
             gamma_ = (2.718281828459**gamma) / (1 + 2.718281828459**gamma)
         if gamma2 != 100.00:
@@ -1266,6 +1281,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
 
                     # 1st stage
                     planets = state_combinations[s1s[i]]
+                    curr_bandit_type = bandit_types[i]  # YC added, 01-19-24
 
                     # Transition matrix
                     # Tm = np.array([[transition_priors[s1s[i]], 1-transition_priors[s1s[i]]], [1 - transition_priors[s1s[i]], transition_priors[s1s[i]]]])
@@ -1681,8 +1697,21 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
             # just update 1st-stage MF values if estimating
             # 2023-02-22: Revive the QMF value update
             # Just assume single learning rate for two stages for now?
+
+            # YC added, 01-19-24
+            if alpha_pos!=100.00:
+                if curr_bandit_type==0:
+                    alfa = alfa_pos
+                    alfa2 = alfa_pos
+                elif curr_bandit_type==1:
+                    alfa = alfa_neu
+                    alfa2 = alfa_neu
+                elif curr_bandit_type==2:
+                    alfa = alfa_neg
+                    alfa2 = alfa_neg
+
             if w != 100.00: # if so, we need to update both Qmb and Qmf
-                if alpha != 100.00: # there should be at least one learning rate to do this (alpha), whether using same or separate lr
+                if alpha != 100.00 or alpha_pos!=100.00: # there should be at least one learning rate to do this (alpha), whether using same or separate lr
             
                     dtQ1 = qs_mb[s2s[i], responses2[i]] - qs_mf[s1s[i], responses1[i]]  # delta stage 1
                     qs_mf[s1s[i], responses1[i]] = qs_mf[
@@ -1693,7 +1722,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                                                     s2s[i], responses2[i]] + alfa2 * dtQ2  # delta update for qmb
 
             else: # if not using both Qmb and Qmf, just update Qmb
-                if alpha != 100.00:
+                if alpha != 100.00 or alpha_pos!=100.00:
                     dtQ2 = feedbacks[i] - qs_mb[s2s[i], responses2[i]]  # delta stage 2
                     qs_mb[s2s[i], responses2[i]] = qs_mb[
                                                     s2s[i], responses2[i]] + alfa * dtQ2  # delta update for qmb

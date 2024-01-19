@@ -83,6 +83,9 @@ class HDDMrl(HDDM):
 
         self.unc_hybrid = kwargs.pop("unc_hybrid", False) # whether to use hybrid
 
+        # YC added for new TST with aversive outcomues, 01-19-24
+        self.aversive = kwargs.pop("aversive", False)
+
         self.choice_model = False # just a placeholder for compatibility
 
         self.wfpt_rl_class = WienerRL
@@ -231,6 +234,43 @@ class HDDMrl(HDDM):
                         std_value=1,
                     )
                 )
+            
+            # YC added for new TST with aversive outcomes, 01-19-24
+            if self.aversive:
+                knodes.update(
+                    self._create_family_normal_non_centered(
+                        "alpha_pos",
+                        value=0,
+                        g_mu=0.2,
+                        g_tau=3 ** -2,
+                        std_lower=1e-10,
+                        std_upper=10,
+                        std_value=1,
+                    )
+                )
+                knodes.update(
+                    self._create_family_normal_non_centered(
+                        "alpha_neu",
+                        value=0,
+                        g_mu=0.2,
+                        g_tau=3 ** -2,
+                        std_lower=1e-10,
+                        std_upper=10,
+                        std_value=1,
+                    )
+                )
+                knodes.update(
+                    self._create_family_normal_non_centered(
+                        "alpha_neg",
+                        value=0,
+                        g_mu=0.2,
+                        g_tau=3 ** -2,
+                        std_lower=1e-10,
+                        std_upper=10,
+                        std_value=1,
+                    )
+                )
+
             if self.sep_alpha:
                 knodes.update(
                     self._create_family_normal_non_centered(
@@ -519,6 +559,42 @@ class HDDMrl(HDDM):
                     )
                 )
 
+            # YC added for new TST with aversive outcomes, 01-19-24
+            if self.dual:
+                knodes.update(
+                    self._create_family_normal(
+                        "alpha_pos",
+                        value=0,
+                        g_mu=0.2,
+                        g_tau=3 ** -2,
+                        std_lower=1e-10,
+                        std_upper=10,
+                        std_value=1,
+                    )
+                )   
+                knodes.update(
+                    self._create_family_normal(
+                        "alpha_neu",
+                        value=0,
+                        g_mu=0.2,
+                        g_tau=3 ** -2,
+                        std_lower=1e-10,
+                        std_upper=10,
+                        std_value=1,
+                    )
+                ) 
+                knodes.update(
+                    self._create_family_normal(
+                        "alpha_neg",
+                        value=0,
+                        g_mu=0.2,
+                        g_tau=3 ** -2,
+                        std_lower=1e-10,
+                        std_upper=10,
+                        std_value=1,
+                    )
+                )          
+
             if self.gamma:
                 knodes.update(
                     self._create_family_normal(
@@ -634,6 +710,11 @@ class HDDMrl(HDDM):
         wfpt_parents = super(HDDMrl, self)._create_wfpt_parents_dict(knodes)
         wfpt_parents["alpha"] = knodes["alpha_bottom"] if self.alpha else 100.00
         wfpt_parents["pos_alpha"] = knodes["pos_alpha_bottom"] if self.dual else 100.00
+
+        # YC added, 01-19-24
+        wfpt_parents["alpha_pos"] = knodes["alpha_pos_bottom"] if self.dual else 100.00
+        wfpt_parents["alpha_neu"] = knodes["alpha_neu_bottom"] if self.dual else 100.00
+        wfpt_parents["alpha_neg"] = knodes["alpha_neg_bottom"] if self.dual else 100.00
 
         wfpt_parents["alpha2"] = knodes["alpha2_bottom"] if self.sep_alpha else 100.00
         wfpt_parents["gamma2"] = knodes["gamma2_bottom"] if self.sep_gamma else 100.00
@@ -1017,7 +1098,7 @@ def wienerRL_like_2step(x, v0, v1, v2, v_interaction, z0, z1, z2, z_interaction,
 #         p_outlier=p_outlier,
 #         **wp
 #     )
-def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_interaction, lambda_, alpha, pos_alpha, gamma, gamma2, a,z,sz,t,st,v,sv, a_2, z_2, t_2,v_2,alpha2,
+def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_interaction, lambda_, alpha, pos_alpha, alpha_pos, alpha_neu, alpha_neg, gamma, gamma2, a,z,sz,t,st,v,sv, a_2, z_2, t_2,v_2,alpha2,
                                            two_stage, w, w2,z_scaler, z_scaler_2, z_sigma,z_sigma2,window_start,window_size, beta_ndt, beta_ndt2, beta_ndt3, beta_ndt4,
                               model_unc_rep, mem_unc_rep, unc_hybrid, w_unc, st2, sv2, sz2, p_outlier=0): # regression ver2: bounded, a fixed to 1
 
@@ -1043,6 +1124,8 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
     feedback = x["feedback"].values.astype(float)
     split_by = x["split_by"].values.astype(int)
 
+    # YC added, 01-19-24
+    bandit_type = x['bandit_type'].values.astype(int)
 
     # JY added for two-step tasks on 2021-12-05
     # nstates = x["nstates"].values.astype(int)
@@ -1068,8 +1151,12 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
         feedback,
         split_by,
         q,
+        bandit_type,    # YC added 01-19-23
         alpha,
         pos_alpha,
+        alpha_pos,
+        alpha_neu,
+        alpha_neg,
         # w, # added for two-step task
         gamma, # added for two-step task
         gamma2,
