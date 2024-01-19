@@ -1293,7 +1293,7 @@ def posterior_predictive_check_dynamic(
             gamma_ = (2.718281828459 ** gamma) / (1 + 2.718281828459 ** gamma)
         if alpha2:
             alfa2 = (2.718281828459 ** alpha2) / (1 + 2.718281828459 ** alpha2)
-        else:
+        elif alpha:
             alfa2 = alfa
         if lambda_:
             lambda__ = (2.718281828459 ** lambda_) / (1 + 2.718281828459 ** lambda_)
