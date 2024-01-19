@@ -1150,8 +1150,8 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
         response2,
         feedback,
         split_by,
-        q,
         bandit_type,    # YC added 01-19-23
+        q,
         alpha,
         pos_alpha,
         alpha_pos,
