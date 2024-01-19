@@ -712,9 +712,9 @@ class HDDMrl(HDDM):
         wfpt_parents["pos_alpha"] = knodes["pos_alpha_bottom"] if self.dual else 100.00
 
         # YC added, 01-19-24
-        wfpt_parents["alpha_pos"] = knodes["alpha_pos_bottom"] if self.dual else 100.00
-        wfpt_parents["alpha_neu"] = knodes["alpha_neu_bottom"] if self.dual else 100.00
-        wfpt_parents["alpha_neg"] = knodes["alpha_neg_bottom"] if self.dual else 100.00
+        wfpt_parents["alpha_pos"] = knodes["alpha_pos_bottom"] if self.aversive else 100.00
+        wfpt_parents["alpha_neu"] = knodes["alpha_neu_bottom"] if self.aversive else 100.00
+        wfpt_parents["alpha_neg"] = knodes["alpha_neg_bottom"] if self.aversive else 100.00
 
         wfpt_parents["alpha2"] = knodes["alpha2_bottom"] if self.sep_alpha else 100.00
         wfpt_parents["gamma2"] = knodes["gamma2_bottom"] if self.sep_gamma else 100.00
