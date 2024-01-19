@@ -1104,7 +1104,7 @@ def posterior_predictive_check(
 # (empirical data should be given)
 def posterior_predictive_check_dynamic(
         # x_train,  # this is the dataframe of data of the given participant
-        x,
+        x,  # subject data
         # fold,
         size=1,
         p_upper=1,
@@ -1143,6 +1143,9 @@ def posterior_predictive_check_dynamic(
     feedback = x["feedback"].values.astype(float)
     split_by = x["split_by"].values.astype(int)
 
+    # YC added for new TST with aversive outcomes
+    bandit_type = x['bandit_type'].values.astype(int)
+
     # JY added for two-step tasks on 2021-12-05
     nstates = max(x["state2"].values.astype(int)) + 1
 
@@ -1178,6 +1181,13 @@ def posterior_predictive_check_dynamic(
     alpha2 = kwargs.pop("alpha2", False)
     beta_ndt = kwargs.pop("beta_ndt", False)
     # beta_ndt2 = kwargs.pop("beta_ndt2", False)
+
+    # YC added for new TST with aversive outcomes
+    # WARNING: the three alpha values added below is raw value in range [0,1], unlike the usual alpha value which required convertion
+    alpha_pos = kwargs.pop("alpha_pos", False)  # for type 0: reward/pos vs reward/pos
+    alpha_neu = kwargs.pop("alpha_neu", False)  # for type 1: reward/pos vs reward/aver, pos/reard vs pos/aver
+    alpha_neg = kwargs.pop("alpha_neg", False)  # for type 2: reward/aver vs pos/aver
+
     all_data = []
 
     tg = t
@@ -1388,6 +1398,17 @@ def posterior_predictive_check_dynamic(
         ]
         for j in range(total_x_len):  # loop over total data
             df.loc[j, "trial"] = j + 1
+
+            curr_bandit_type = bandit_type[j]
+            if curr_bandit_type==0:
+                alfa = alpha_pos
+                alfa2 = alpha_pos
+            elif curr_bandit_type==1:
+                alfa = alpha_neu
+                alfa2 = alpha_neu
+            elif curr_bandit_type==2:
+                alfa = alpha_neg
+                alfa2 = alpha_neg
 
             # FIRST STAGE
             planets = state_combinations[s1s[j]]
