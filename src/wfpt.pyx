@@ -979,7 +979,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                       np.ndarray[long, ndim=1] response2,
                       np.ndarray[double, ndim=1] feedback,
                       np.ndarray[long, ndim=1] split_by,
-                      np.ndarray [int, ndim=1] bandit_type,
+                      np.ndarray[int, ndim=1] bandit_type,
                       double q, 
                       double alpha, double pos_alpha,
                       double alpha_pos, double alpha_neu, double alpha_neg, # YC added for aversive outcomes, 01-19-24
