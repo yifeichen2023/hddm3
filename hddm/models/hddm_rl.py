@@ -862,7 +862,7 @@ class HDDMrl(HDDM):
             self.wfpt_rl_class,
             "wfpt",
             observed=True,
-            col_name=["split_by", "feedback", "response1", "response2", "rt1", "rt2",  "q_init", "state1", "state2", "bandit_type"],
+            col_name=["split_by", "feedback", "response1", "response2", "rt1", "rt2",  "q_init", "state1", "state2"],
             # col_name=["split_by", "feedback", "response1", "response2", "rt1", "rt2",  "q_init", "state1", "state2", "isleft1", "isleft2"],
             **wfpt_parents
         )
@@ -1124,8 +1124,6 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
     feedback = x["feedback"].values.astype(float)
     split_by = x["split_by"].values.astype(int)
 
-    # YC added, 01-19-24
-    bandit_type = x['bandit_type'].values.astype(int)
 
     # JY added for two-step tasks on 2021-12-05
     # nstates = x["nstates"].values.astype(int)
@@ -1136,7 +1134,6 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
 
     # if
     print(alpha_pos.dtype,alpha_neu.dtype,alpha_neg.dtype)
-    print(bandit_type.dtype)
     return wiener_like_rlddm_uncertainty(
     # return wiener_like_rlddm_2step_reg_sliding_window(
         x["rt1"].values,
@@ -1151,7 +1148,6 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
         response2,
         feedback,
         split_by,
-        bandit_type,    # YC added 01-19-23
         q,
         alpha,
         pos_alpha,

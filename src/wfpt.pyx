@@ -979,7 +979,6 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                       np.ndarray[long, ndim=1] response2,
                       np.ndarray[double, ndim=1] feedback,
                       np.ndarray[long, ndim=1] split_by,
-                      np.ndarray[int, ndim=1] bandit_type,
                       double q, 
                       double alpha, double pos_alpha,
                       float alpha_pos, float alpha_neu, float alpha_neg, # YC added for aversive outcomes, 01-19-24
@@ -1207,8 +1206,6 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
         s1s = s1[split_by == s]
         s2s = s2[split_by == s]
 
-        # YC added 01-19-24
-        bandit_types = bandit_type[split_by==s]
 
         s_size = x1s.shape[0]
         qs_mf[:,0] = q
@@ -1281,7 +1278,6 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
 
                     # 1st stage
                     planets = state_combinations[s1s[i]]
-                    curr_bandit_type = bandit_types[i]  # YC added, 01-19-24
 
                     # Transition matrix
                     # Tm = np.array([[transition_priors[s1s[i]], 1-transition_priors[s1s[i]]], [1 - transition_priors[s1s[i]], transition_priors[s1s[i]]]])
@@ -1700,13 +1696,13 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
 
             # YC added, 01-19-24
             if alpha_pos!=100.00:
-                if curr_bandit_type==0:
+                if s2s[i]==0:
                     alfa = alfa_pos
                     alfa2 = alfa_pos
-                elif curr_bandit_type==1:
+                elif s2s[i]==1 or s2s[i]==2:
                     alfa = alfa_neu
                     alfa2 = alfa_neu
-                elif curr_bandit_type==2:
+                elif s2s[i]==3:
                     alfa = alfa_neg
                     alfa2 = alfa_neg
 
