@@ -248,6 +248,7 @@ class HDDMrl(HDDM):
                         std_value=1,
                     )
                 )
+            if self.aversive:
                 knodes.update(
                     self._create_family_normal_non_centered(
                         "alpha_neu",
@@ -259,6 +260,7 @@ class HDDMrl(HDDM):
                         std_value=1,
                     )
                 )
+            if self.aversive:
                 knodes.update(
                     self._create_family_normal_non_centered(
                         "alpha_neg",
