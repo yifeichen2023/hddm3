@@ -573,7 +573,8 @@ class HDDMrl(HDDM):
                         std_upper=10,
                         std_value=1,
                     )
-                )   
+                )  
+            if self.aversive: 
                 knodes.update(
                     self._create_family_normal(
                         "alpha_neu",
@@ -585,6 +586,7 @@ class HDDMrl(HDDM):
                         std_value=1,
                     )
                 ) 
+            if self.aversive:
                 knodes.update(
                     self._create_family_normal(
                         "alpha_neg",
