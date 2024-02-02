@@ -239,7 +239,7 @@ class HDDMrl(HDDM):
             if self.aversive:
                 knodes.update(
                     self._create_family_normal_non_centered(
-                        "alpha_pos",
+                        "posalpha",
                         value=0,
                         g_mu=0.2,
                         g_tau=3 ** -2,
@@ -251,7 +251,7 @@ class HDDMrl(HDDM):
             if self.aversive:
                 knodes.update(
                     self._create_family_normal_non_centered(
-                        "alpha_neu",
+                        "neualpha",
                         value=0,
                         g_mu=0.2,
                         g_tau=3 ** -2,
@@ -263,7 +263,7 @@ class HDDMrl(HDDM):
             if self.aversive:
                 knodes.update(
                     self._create_family_normal_non_centered(
-                        "alpha_neg",
+                        "negalpha",
                         value=0,
                         g_mu=0.2,
                         g_tau=3 ** -2,
@@ -565,7 +565,7 @@ class HDDMrl(HDDM):
             if self.aversive:
                 knodes.update(
                     self._create_family_normal(
-                        "alpha_pos",
+                        "posalpha",
                         value=0,
                         g_mu=0.2,
                         g_tau=3 ** -2,
@@ -577,7 +577,7 @@ class HDDMrl(HDDM):
             if self.aversive: 
                 knodes.update(
                     self._create_family_normal(
-                        "alpha_neu",
+                        "neualpha",
                         value=0,
                         g_mu=0.2,
                         g_tau=3 ** -2,
@@ -589,7 +589,7 @@ class HDDMrl(HDDM):
             if self.aversive:
                 knodes.update(
                     self._create_family_normal(
-                        "alpha_neg",
+                        "negalpha",
                         value=0,
                         g_mu=0.2,
                         g_tau=3 ** -2,
@@ -716,9 +716,9 @@ class HDDMrl(HDDM):
         wfpt_parents["pos_alpha"] = knodes["pos_alpha_bottom"] if self.dual else 100.00
 
         # YC added, 01-19-24
-        wfpt_parents["alpha_pos"] = knodes["alpha_pos_bottom"] if self.aversive else 100.00
-        wfpt_parents["alpha_neu"] = knodes["alpha_neu_bottom"] if self.aversive else 100.00
-        wfpt_parents["alpha_neg"] = knodes["alpha_neg_bottom"] if self.aversive else 100.00
+        wfpt_parents["posalpha"] = knodes["posalpha_bottom"] if self.aversive else 100.00
+        wfpt_parents["neualpha"] = knodes["neualpha_bottom"] if self.aversive else 100.00
+        wfpt_parents["negalpha"] = knodes["negalpha_bottom"] if self.aversive else 100.00
 
         wfpt_parents["alpha2"] = knodes["alpha2_bottom"] if self.sep_alpha else 100.00
         wfpt_parents["gamma2"] = knodes["gamma2_bottom"] if self.sep_gamma else 100.00
@@ -1102,7 +1102,7 @@ def wienerRL_like_2step(x, v0, v1, v2, v_interaction, z0, z1, z2, z_interaction,
 #         p_outlier=p_outlier,
 #         **wp
 #     )
-def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_interaction, lambda_, alpha, pos_alpha, alpha_pos, alpha_neu, alpha_neg, gamma, gamma2, a,z,sz,t,st,v,sv, a_2, z_2, t_2,v_2,alpha2,
+def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_interaction, lambda_, alpha, pos_alpha, posalpha, neualpha, negalpha, gamma, gamma2, a,z,sz,t,st,v,sv, a_2, z_2, t_2,v_2,alpha2,
                                            two_stage, w, w2,z_scaler, z_scaler_2, z_sigma,z_sigma2,window_start,window_size, beta_ndt, beta_ndt2, beta_ndt3, beta_ndt4,
                               model_unc_rep, mem_unc_rep, unc_hybrid, w_unc, st2, sv2, sz2, p_outlier=0): # regression ver2: bounded, a fixed to 1
 
@@ -1138,8 +1138,7 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
 
     # if
     print(type(alpha))
-    print(type(alpha_pos), type(alpha_neu), type(alpha_neg))
-    print(alpha_pos.dtype,alpha_neu.dtype,alpha_neg.dtype)
+    print(type(posalpha), type(neualpha), type(negalpha))
     return wiener_like_rlddm_uncertainty(
     # return wiener_like_rlddm_2step_reg_sliding_window(
         x["rt1"].values,
@@ -1157,9 +1156,9 @@ def wienerRL_like_uncertainty(x, v0, v1, v2, v_interaction, z0, z1, z2, z_intera
         q,
         alpha,
         pos_alpha,
-        alpha_pos,
-        alpha_neu,
-        alpha_neg,
+        posalpha,
+        neualpha,
+        negalpha,
         # w, # added for two-step task
         gamma, # added for two-step task
         gamma2,

@@ -981,7 +981,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                       np.ndarray[long, ndim=1] split_by,
                       double q, 
                       double alpha, double pos_alpha,
-                      float alpha_pos, float alpha_neu, float alpha_neg, # YC added for aversive outcomes, 01-19-24
+                      double posalpha, double neualpha, double negalpha, # YC added for aversive outcomes, 01-19-24
 
                       # double w,
                       double gamma, double gamma2,
@@ -1218,12 +1218,12 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
             alfa = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
 
         # YC added for aversive outcomes, 01-19-24
-        if alpha_pos != 100.00:
-            alfa_pos = (2.718281828459**alpha_pos) / (1 + 2.718281828459**alpha_pos)
-        if alpha_neu != 100.00:
-            alfa_neu = (2.718281828459**alpha_neu) / (1 + 2.718281828459**alpha_neu)
-        if alpha_neg != 100.00:
-            alfa_neg = (2.718281828459**alfa_neg) / (1 + 2.718281828459**alfa_neg)
+        if posalpha != 100.00:
+            alfa_pos = (2.718281828459**posalpha) / (1 + 2.718281828459**posalpha)
+        if neualpha != 100.00:
+            alfa_neu = (2.718281828459**neualpha) / (1 + 2.718281828459**neualpha)
+        if negalpha != 100.00:
+            alfa_neg = (2.718281828459**negalpha) / (1 + 2.718281828459**negalpha)
 
         if gamma != 100.00:
             gamma_ = (2.718281828459**gamma) / (1 + 2.718281828459**gamma)
@@ -1695,7 +1695,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
             # Just assume single learning rate for two stages for now?
 
             # YC added, 01-19-24
-            if alpha_pos!=100.00:
+            if posalpha!=100.00:
                 if s2s[i]==0:
                     alfa = alfa_pos
                     alfa2 = alfa_pos
@@ -1707,7 +1707,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                     alfa2 = alfa_neg
 
             if w != 100.00: # if so, we need to update both Qmb and Qmf
-                if alpha != 100.00 or alpha_pos!=100.00: # there should be at least one learning rate to do this (alpha), whether using same or separate lr
+                if alpha != 100.00 or posalpha!=100.00: # there should be at least one learning rate to do this (alpha), whether using same or separate lr
             
                     dtQ1 = qs_mb[s2s[i], responses2[i]] - qs_mf[s1s[i], responses1[i]]  # delta stage 1
                     qs_mf[s1s[i], responses1[i]] = qs_mf[
@@ -1718,7 +1718,7 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
                                                     s2s[i], responses2[i]] + alfa2 * dtQ2  # delta update for qmb
 
             else: # if not using both Qmb and Qmf, just update Qmb
-                if alpha != 100.00 or alpha_pos!=100.00:
+                if alpha != 100.00 or posalpha!=100.00:
                     dtQ2 = feedbacks[i] - qs_mb[s2s[i], responses2[i]]  # delta stage 2
                     qs_mb[s2s[i], responses2[i]] = qs_mb[
                                                     s2s[i], responses2[i]] + alfa * dtQ2  # delta update for qmb
