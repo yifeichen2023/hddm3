@@ -1184,9 +1184,9 @@ def posterior_predictive_check_dynamic(
 
     # YC added for new TST with aversive outcomes
     # WARNING: the three alpha values added below is raw value in range [0,1], unlike the usual alpha value which required convertion
-    alpha_pos = kwargs.pop("alpha_pos", False)  # for type 0: reward/pos vs reward/pos
-    alpha_neu = kwargs.pop("alpha_neu", False)  # for type 1: reward/pos vs reward/aver, pos/reard vs pos/aver
-    alpha_neg = kwargs.pop("alpha_neg", False)  # for type 2: reward/aver vs pos/aver
+    posalpha = kwargs.pop("posalpha", False)  # for type 0: reward/pos vs reward/pos
+    neualpha = kwargs.pop("neualpha", False)  # for type 1: reward/pos vs reward/aver, pos/reard vs pos/aver
+    negalpha = kwargs.pop("negalpha", False)  # for type 2: reward/aver vs pos/aver
 
     all_data = []
 
@@ -1303,6 +1303,10 @@ def posterior_predictive_check_dynamic(
             w_unc_ = (2.718281828459 ** w_unc) / (1 + 2.718281828459 ** w_unc)
         # if w2:
         #     w2 = (2.718281828459 ** w2) / (1 + 2.718281828459 ** w2)
+        if posalpha:
+            posalpha = (2.718281828459 ** posalpha) / (1 + 2.718281828459 ** posalpha)
+            neualpha = (2.718281828459 ** neualpha) / (1 + 2.718281828459 ** neualpha)
+            negalpha = (2.718281828459 ** negalpha) / (1 + 2.718281828459 ** negalpha)
 
         state_combinations = np.array(list(itertools.combinations(np.arange(nstates), 2)))
 
@@ -1401,14 +1405,14 @@ def posterior_predictive_check_dynamic(
 
             curr_bandit_type = bandit_type[j]
             if curr_bandit_type==0:
-                alfa = alpha_pos
-                alfa2 = alpha_pos
+                alfa = posalpha
+                alfa2 = posalpha
             elif curr_bandit_type==1:
-                alfa = alpha_neu
-                alfa2 = alpha_neu
+                alfa = neualpha
+                alfa2 = neualpha
             elif curr_bandit_type==2:
-                alfa = alpha_neg
-                alfa2 = alpha_neg
+                alfa = negalpha
+                alfa2 = negalpha
 
             # FIRST STAGE
             planets = state_combinations[s1s[j]]
