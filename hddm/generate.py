@@ -1517,7 +1517,7 @@ def posterior_predictive_check_dynamic(
                 subjs=1, size=n_simulation
                 # size=1000, subjs=1  # make 1,000 simulations?
             )
-            print('second', a, t_, v_, z)
+            print('first', a, t_, v_, z)
             df.loc[j, "response1"] = data1.response[0]
             df.loc[j, "rt1"] = data1.rt[0]
             # SECOND STAGE
@@ -1543,6 +1543,8 @@ def posterior_predictive_check_dynamic(
                     # size=1000, subjs=1  # make 1,000 simulations?
                 )
                 print('second', a_2, t_2, v_, sig)
+                print('first', data1.response[0], 'second', data2.response[0])
+                print('first', data1.rt[0], 'second', data2.rt[0])
                 df.loc[j, "response2"] = data2.response[0]
                 df.loc[j, "rt2"] = data2.rt[0]
             # ndt_counter_set[s1s[j], 0] += 1
