@@ -1533,6 +1533,25 @@ def posterior_predictive_check_dynamic(
                 beta_success_ind[chosen_state] += 1
                 beta_success_set[s1s[j]] += 1
 
+            # YC added for new dual alpha 03-05-24
+            # baseline case
+            if alpha != 100.00:
+                alfa = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+            
+            if alpha2 != 100.00:
+                alfa2 = (2.718281828459**alpha2) / (1 + 2.718281828459**alpha2)
+            else:
+                alfa2 = alfa
+
+            # dual alpha case dependent on planet type (0->only positive reward)
+            if pos_alpha!=100.00:   # dual alpha, assume no difference between first and second stage learning rates
+                if s2s[j]==0:
+                    alfa = (2.718281828459**pos_alfa) / (1 + 2.718281828459**pos_alfa)
+                    alfa2 = (2.718281828459**pos_alfa) / (1 + 2.718281828459**pos_alfa)
+                else:
+                    alfa = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+                    alfa2 = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+
             dtQ1 = qs_mb[s2s[j], actual_responses2[j]] - qs_mf[
                 s1s[j], actual_responses1[j]]  # delta stage 1
             qs_mf[s1s[j], actual_responses1[j]] = qs_mf[s1s[j], actual_responses1[

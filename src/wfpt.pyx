@@ -1681,6 +1681,27 @@ def wiener_like_rlddm_uncertainty(np.ndarray[double, ndim=1] x1, # 1st-stage RT
             # just update 1st-stage MF values if estimating
             # 2023-02-22: Revive the QMF value update
             # Just assume single learning rate for two stages for now?
+
+            # YC added for new dual alpha 03-05-24
+            # baseline case
+            if alpha != 100.00:
+                alfa = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+            
+            if alpha2 != 100.00:
+                alfa2 = (2.718281828459**alpha2) / (1 + 2.718281828459**alpha2)
+            else:
+                alfa2 = alfa
+
+            # dual alpha case dependent on planet type (0->only positive reward)
+            if pos_alpha!=100.00:   # dual alpha, assume no difference between first and second stage learning rates
+                if s2s[i]==0:
+                    alfa = (2.718281828459**pos_alfa) / (1 + 2.718281828459**pos_alfa)
+                    alfa2 = (2.718281828459**pos_alfa) / (1 + 2.718281828459**pos_alfa)
+                else:
+                    alfa = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+                    alfa2 = (2.718281828459**alpha) / (1 + 2.718281828459**alpha)
+
+
             if w != 100.00: # if so, we need to update both Qmb and Qmf
                 if alpha != 100.00: # there should be at least one learning rate to do this (alpha), whether using same or separate lr
             
